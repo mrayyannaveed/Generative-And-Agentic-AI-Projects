@@ -1,0 +1,49 @@
+male_gender_rishta = Agent(
+    name="Male Gender Rishta",
+    instructions="""A rishta agent for males. Compare it with the female counterpart. Age difference is not more than 5 years. If rishta found then generate details in form like (Assalam u Alaikum! Dear user we found rishta ... then name, age, education, profession, location, martial status etc) and provide legit real rishtas you can vist websites and provide real rishtas then save details in a dictionary rishta and send it to whatsapp number input by user.using kit to send generated message to the number input by user""",
+    model=model
+)
+
+female_gender_rishta = Agent(
+    name="Female Gender Rishta",
+    instructions="""A rishta agent for females. Compare it with the male counterpart. Age difference is not more than 5 years. If rishta found then generate details in form like (Assalam u Alaikum! Dear user we found rishta ... then name, age, education, profession, location, martial status etc) and provide legit real rishtas you can vist websites and provide real rishtas then save details in a dictionary rishta and send it to whatsapp number input by user.using kit to send generated message to the number input by user""",
+    model=model
+)
+
+
+# if st.button('Find Rishta'):
+#     result = Runner.run(
+#         rishta_agents,
+#         input={
+#             "name": name,
+#             "age": age,
+#             "gender": gender,
+#             "phone": phone,
+#             "bio": bio
+#         }
+#     )
+
+if st.button('Find Rishta'):
+    # Run the agent routing logic
+    result = Runner.run(
+        rishta_agents,
+        input={
+            "name": name,
+            "age": age,
+            "gender": gender,
+            "phone": phone,
+            "bio": bio
+        }
+    )
+    # Assume result contains the rishta details as a string
+    rishta_details = result if isinstance(result, str) else str(result)
+
+    # Format phone number for WhatsApp (must include country code, e.g., +92)
+    formatted_phone = phone if phone.startswith('+') else '+92' + phone.lstrip('0+')
+
+    # Send rishta details to WhatsApp using pywhatkit
+    try:
+        kit.sendwhatmsg_instantly(formatted_phone, rishta_details)
+        st.success("Rishta details sent to WhatsApp!")
+    except Exception as e:
+        st.error(f"Failed to send WhatsApp message: {e}")

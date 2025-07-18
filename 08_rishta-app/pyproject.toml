@@ -1,0 +1,12 @@
+[project]
+name = "08-rishta-app"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "openai-agents>=0.2.0",
+    "pywhatkit>=5.4",
+    "requests>=2.32.4",
+    "streamlit>=1.47.0",
+]
