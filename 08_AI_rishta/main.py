@@ -3,16 +3,12 @@ from openai import AsyncOpenAI
 import chainlit as cl
 import os
 from dotenv import load_dotenv
-import requests
 
 load_dotenv()
 # set_tracing_disabled(disabled=True)
 
 gemini_api_key = os.getenv("GEMINI_API_KEY")
 base_url = os.getenv("BASE_URL")
-MAILEROO_API_KEY = os.getenv("MAILEROO_API_KEY")
-MAILEROO_DOMAIN = os.getenv("MAILEROO_DOMAIN")
-MAILEROO_EMAIL = os.getenv("MAILEROO_EMAIL")
 
 client = AsyncOpenAI(api_key=gemini_api_key, base_url=base_url)
 
@@ -90,24 +86,6 @@ rishta_agent = Agent(
     handoffs=[male_gender_rishta, female_gender_rishta]
 )
 
-
-def send_maileroo_email(to_email, subject, text):
-    url = "https://api.maileroo.com/v1/messages"
-    headers = {
-        "Authorization": f"Bearer {MAILEROO_API_KEY}",
-        "Content-Type": "application/json"
-    }
-    data = {
-        "from": MAILEROO_EMAIL,
-        "to": [to_email],
-        "subject": subject,
-        "text": text
-    }
-    response = requests.post(url, headers=headers, json=data)
-    return response
-
-
-
 @cl.on_chat_start
 async def on_chat_start():
     cl.user_session.set('history', [])
@@ -126,12 +104,3 @@ async def on_message(message: cl.Message):
     history.append({"role": "assistant", "content": result.final_output})
     cl.user_session.set('history', history)
     await cl.Message(content=result.final_output).send()
-
-if __name__ == "__main__":
-    response = send_maileroo_email(
-        "recipient@example.com",
-        "Your AI Rishta Output",
-        "Assalam u Alaikum! Dear user, we found a rishta for you: ..."
-    )
-    print(response.status_code)
-    print(response.text) 
