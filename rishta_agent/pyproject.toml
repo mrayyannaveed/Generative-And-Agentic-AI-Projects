@@ -1,0 +1,21 @@
+[project]
+name = "rishta-agent"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Rayyan Naveed", email = "rayyannaveed33@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "openai-agents>=0.2.2",
+    "python-dotenv>=1.1.1",
+]
+
+[project.scripts]
+rishta-agent = "rishta_agent:main"
+main = "rishta_agent.main:start"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
