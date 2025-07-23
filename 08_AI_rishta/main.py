@@ -14,7 +14,7 @@ client = AsyncOpenAI(api_key=gemini_api_key, base_url=base_url)
 
 model = OpenAIChatCompletionsModel(
     openai_client=client,
-    model="gemini-2.0-flash"
+    model="gemini-2.0-flash" 
 )
 
 config = RunConfig(

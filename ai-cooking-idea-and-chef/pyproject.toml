@@ -1,0 +1,21 @@
+[project]
+name = "ai-cooking-idea-and-chef"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Rayyan Naveed", email = "rayyannaveed33@gmail.com" }
+]
+requires-python = ">=3.13"
+dependencies = [
+    "chainlit>=2.6.2",
+    "openai-agents>=0.2.2",
+    "python-dotenv>=1.1.1",
+]
+
+[project.scripts]
+ai-cooking-idea-and-chef = "ai_cooking_idea_and_chef:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
