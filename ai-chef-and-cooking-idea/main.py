@@ -1,4 +1,4 @@
-from agents import Agent, InputGuardrailTripwireTriggered, Runner, OpenAIChatCompletionsModel, set_tracing_disabled
+from agents import Agent, InputGuardrailTripwireTriggered, Runner, OpenAIChatCompletionsModel, set_tracing_disabled, set_default_openai_api, set_default_openai_client
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 import os
@@ -13,11 +13,12 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY not found in .env file")
 BASE_URL = os.getenv("BASE_URL")
-GEMINI_MODEL = "gemini-2.0-flash"
 
 client = AsyncOpenAI(api_key=GEMINI_API_KEY, base_url=BASE_URL)
+set_default_openai_client(client)
+set_default_openai_api('chat_completions')
 
-model = OpenAIChatCompletionsModel(openai_client=client, model=GEMINI_MODEL)
+model = OpenAIChatCompletionsModel(openai_client=client, model="gemini-2.0-flash")
 
 class CookingRequest(BaseModel):
     is_cooking_related : bool
@@ -99,9 +100,9 @@ main_cooking_agent = Agent(
     name="Cooking Agent",
     instructions=("""You are a helpful cooking agent. If user want a cooking idea or any dish idea like suggest anything what i will make today etc., you will hand offs it to Cook Idea Agent or if user wants to create a recipe, you will hand off to Chef Agent. Then They will output the user query."""),
     model=model,
-    handoffs=["Cook Idea Agent", "Chef Agent"],
     input_guardrails=[cooking_input_guardrail],
     output_guardrails=[cooking_output_guardrail],
+    handoffs=["Cook Idea Agent", "Chef Agent"],
 )
 
 @cl.on_chat_start
@@ -134,7 +135,6 @@ async def handle_message(message: cl.Message):
         else:
             final_output = response.final_output
 
-        # Send and record the final message actually shown to user
         await cl.Message(content=final_output).send()
         history.append({"role": "assistant", "content": final_output})
         cl.user_session.set("history", history)
