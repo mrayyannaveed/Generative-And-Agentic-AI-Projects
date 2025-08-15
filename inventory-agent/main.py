@@ -6,7 +6,6 @@ import os
 from dotenv import load_dotenv
 import chainlit as cl
 
-# Load environment variables
 load_dotenv()
 set_tracing_disabled(disabled=True)
 
@@ -16,10 +15,8 @@ BASE_URL = os.getenv("BASE_URL")
 client = AsyncOpenAI(api_key=GEMINI_API_KEY, base_url=BASE_URL)
 model = OpenAIChatCompletionsModel(openai_client=client, model="gemini-2.5-flash")
 
-# Inventory storage
 inventory_list = []
 
-# ----------------- TOOL FUNCTIONS -----------------
 @function_tool
 def add_data(data: str) -> str:
     inventory_list.append(data)
@@ -46,7 +43,7 @@ def delete_data(item: str) -> str:
         return f"🗑️ Deleted '{item}' from inventory."
     return f"⚠️ '{item}' not found in inventory."
 
-# ----------------- AGENT SETUP -----------------
+
 inventory_agent = Agent(
     name="Inventory Agent",
     instructions="""
@@ -63,7 +60,7 @@ inventory_agent = Agent(
     tools=[add_data, get_data, update_data, delete_data]
 )
 
-# ----------------- CHAINLIT HANDLERS -----------------
+
 @cl.on_chat_start
 async def handle_chat_start():
     cl.user_session.set('history', [])
@@ -75,11 +72,8 @@ async def handle_message(message: cl.Message):
     history.append({'role': 'user', 'content': message.content})
     cl.user_session.set('history', history)
 
-    # Run the agent
     result = Runner.run_streamed(starting_agent=inventory_agent, input=message.content)
 
     async for event in result.stream_events():
         if event.type == "raw_response_event" and isinstance(event.data, ResponseTextDeltaEvent):
             await cl.Message(content=event.data.delta).send()
-
-# ! After using any tool, always enhance the tool's output before responding to the user.
