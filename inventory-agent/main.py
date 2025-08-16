@@ -60,7 +60,6 @@ inventory_agent = Agent(
     tools=[add_data, get_data, update_data, delete_data]
 )
 
-
 @cl.on_chat_start
 async def handle_chat_start():
     cl.user_session.set('history', [])
